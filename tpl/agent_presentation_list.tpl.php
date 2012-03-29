@@ -3,28 +3,6 @@
 connect("<?php echo $settings['host'];?>","<?php echo $settings['port'];?>","device");	
 setInterval("dlist_send()",10000);
 
-$(document).ready(function() {
-	$('input#startBt').click(function() {
-		var sel_id = $(this).parent().attr('id');
-		var device = $("#"+sel_id+" #valueBt").val();
-		send(device);
-		$('#'+ sel_id +' #startBt').attr("disabled","disabled");
-		$('#'+ sel_id +' #startBt').css({'opacity':'0.5'});
-		$('#'+ sel_id +' #stopBt').removeAttr('disabled');
-		$('#'+ sel_id +' #stopBt').css({'opacity':'1'});
-	});
-
-	$('input#stopBt').click(function() {
-		var sel_id = $(this).parent().attr('id');
-		var device = $("#"+sel_id+" #valueBt").val();
-		send_stop(device);
-		$('#'+ sel_id +' #startBt').removeAttr('disabled');
-		$('#'+ sel_id +' #startBt').css({'opacity':'1'});
-		$('#'+ sel_id +' #stopBt').attr("disabled","disabled");
-		$('#'+ sel_id +' #stopBt').css({'opacity':'0.5'});
-	});
-});
-
 function checkdata(device_list) {
 	$("div.action_text").html('');
 
@@ -90,12 +68,8 @@ function chat_message(message) {
 function chat_message2(message,sender) 
 {
 
-	if(message!="DLIST")
-	{
-	var devices=message;
-
-	
-	}
+		if((message=="DLIST") || (message == "dynamiclist")) { return; }
+var devices = message;
 
 var device_dynamic = "";
 	var d1 = devices.split(';');

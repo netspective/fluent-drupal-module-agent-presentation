@@ -5,7 +5,7 @@
 * @param arg array that holds the current path as would be returned from arg() function
 * @return help text for the path
 */
-function agent_present_help($path, $arg) {
+function fluent_agent_presentation_help($path, $arg) {
   $output = '';  //declare your output variable
   switch ($path) {
     case "admin/help#agent_present":
@@ -13,14 +13,14 @@ function agent_present_help($path, $arg) {
       break;
   }
   return $output;
-} // function agent_present_help
+} // function fluent_agent_presentation_help
 
-function agent_present_perm() {
-  return array('access agent_present content');
-} // function agent_present_perm()
+function fluent_agent_presentation_perm() {
+  return array('access fluent_agent_presentation content');
+} // function fluent_agent_presentation_perm()
 
 
-function agent_present_menu() {
+function fluent_agent_presentation_menu() {
 
   $items = array();
 
@@ -28,7 +28,7 @@ function agent_present_menu() {
     'title' => t('Agent presenter Settings'),
     'description' => t('Description of your Fluent UI settings page'),
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('agent_present_admin'),
+    'page arguments' => array('fluent_agent_presentation_admin'),
     'access arguments' => array('access administration pages'),
     'type' => MENU_NORMAL_ITEM,
    );
@@ -66,7 +66,7 @@ function agent_present_menu() {
     'title' => 'Agent Presentation',
     'page callback' => 'agent_present_fluentui_device',
 	'page arguments' => array(2, 3),
-    'access arguments' => array('access agent_present content'),
+    'access arguments' => array('access fluent_agent_presentation content'),
     'type' => MENU_CALLBACK
   );
 
@@ -75,14 +75,14 @@ function agent_present_menu() {
     'title' => 'Agent Presentation',
     'page callback' => 'agent_present_fluentui_device',
 	'page arguments' => array(1, 2),
-    'access arguments' => array('access agent_present content'),
+    'access arguments' => array('access fluent_agent_presentation content'),
     'type' => MENU_NORMAL_ITEM
   );
   
   return $items;
 }
 
-function agent_present_admin() {
+function fluent_agent_presentation_admin() {
  $form = array();
 $query = "select hostname, port_add from {agent_settings} where settings_id = 1";
   $i=0;
@@ -110,11 +110,11 @@ $query = "select hostname, port_add from {agent_settings} where settings_id = 1"
     '#required' => TRUE,
   );
   
-  $form['#submit'][] = 'agent_present_admin_submit';
+  $form['#submit'][] = 'fluent_agent_presentation_admin_submit';
   return system_settings_form($form);
 }
 
-function agent_present_admin_submit($form, &$form_state) {
+function fluent_agent_presentation_admin_submit($form, &$form_state) {
     $port = $form_state['values']['agent_port'];
     $hosturl = $form_state['values']['agent_hostname'];
 
@@ -123,19 +123,19 @@ function agent_present_admin_submit($form, &$form_state) {
     if ($exe_query !== false) {
         $msg = 'Updated ';
         $vars = array('%id'=>1);
-        watchdog('agent_present_module', $msg, $vars, WATCHDOG_INFO);
+        watchdog('fluent_agent_presentation_module', $msg, $vars, WATCHDOG_INFO);
         drupal_set_message(t('Updated port'));
     } else {
         $msg = 'Could not Update ';
         $vars = array();
-        watchdog('agent_present_module', $msg, $vars, WATCHDOG_ERROR);
+        watchdog('fluent_agent_presentation_module', $msg, $vars, WATCHDOG_ERROR);
         drupal_set_message(t('Could not Update.'));
     }
    
     $form_state['redirect'] = 'admin/settings/agent_present';
 }
 
-function agent_present_block($op='list', $delta=0) {
+function fluent_agent_presentation_block($op='list', $delta=0) {
   // set up the block 
   $block = array();
 
@@ -191,22 +191,22 @@ function agent_agent_device_present($action,$device_id,$device) {
 /**
  * Implementation of hook_theme()
  */
-function agent_present_theme() {
+function fluent_agent_presentation_theme() {
   return array(
     'agent_present_list' => array(
       'template' => 'tpl/agent_present_list',
       'arguments' => array('devices' => NULL, 'id' => NULL),
     ),
     'agent_present_device' => array(
-      'template' => 'tpl/agent_present_device',
+      'template' => 'tpl/agent_presentation_list',
       'arguments' => array('device' => NULL, 'domain' => NULL),
     ),
 	'agent_device_present' => array(
-      'template' => 'tpl/agent_device_present',
+      'template' => 'tpl/agent_device_status',
       'arguments' => array('device' => NULL, 'domain' => NULL, 'action' => NULL),
     ),
 	'agent_device' => array(
-      'template' => 'tpl/agent_device',
+      'template' => 'tpl/agent_device_graphs',
       'arguments' => array('device' => NULL, 'domain' => NULL),
     ),
   );
@@ -215,15 +215,15 @@ function agent_present_theme() {
 /**
  * Implementation of hook_init().
  */
-function agent_present_init() {
-  drupal_add_js(drupal_get_path('module', 'agent_present') .'/js/jquery-1.6.3.min.js');
-  drupal_add_js(drupal_get_path('module', 'agent_present') .'/js/jquery.flot.min.js');
-  drupal_add_js(drupal_get_path('module', 'agent_present') .'/js/cookie.js');
+function fluent_agent_presentation_init() {
+  drupal_add_js(drupal_get_path('module', 'fluent_agent_presentation') .'/js/jquery-1.6.3.min.js');
+  drupal_add_js(drupal_get_path('module', 'fluent_agent_presentation') .'/js/jquery.flot.min.js');
+  drupal_add_js(drupal_get_path('module', 'fluent_agent_presentation') .'/js/cookie.js');
 }
 
 function template_preprocess_agent_device_present(&$variables) {
-	drupal_add_js('modules/agent_present/js/'.$variables['domain'].'.js');
-	drupal_add_js('modules/agent_present/js/websocket.js');
+	drupal_add_js('modules/fluent_agent_presentation/js/'.$variables['domain'].'.js');
+	drupal_add_js('modules/fluent_agent_presentation/js/websocket.js');
 	$variables['settings'] = _agent_present_get_settings_value();
 }
 
@@ -285,10 +285,10 @@ function agent_agent_device($device_id,$device) {
 }
 
 function template_preprocess_agent_device(&$variables) {
-	drupal_add_js('modules/agent_present/js/'.$variables['domain'].'.js');
+	drupal_add_js('modules/fluent_agent_presentation/js/'.$variables['domain'].'.js');
 	$variables['status'] = 0;
-	if(module_exists("agent")) { 
-		drupal_add_js('modules/agent/js/websocket.js');
+	if(module_exists("fluent_agent_controller")) { 
+		drupal_add_js('modules/fluent_agent_presentation/js/websocket.js');
 		$variables['status'] = 1;
 	}
 	$variables['settings'] = _agent_present_get_settings_value();
